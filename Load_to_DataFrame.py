@@ -55,6 +55,11 @@ def merge_dataframes(base_df, fix_pt):
 
     return data_df
 
+def load_all():
+    df_1 = load_building_data()
+    df_2 = load_fixture_data()
+    df_3 = merge_dataframes(df_1, df_2)
+    return df_3
 
 if __name__ == '__main__':
     build_df = load_building_data()
