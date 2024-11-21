@@ -4,8 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7e892372-6bdf-4435-bae0-f81fe6e0092a" name="Changes" comment="Following method for gradient boosting algorithm">
-      <change beforePath="$PROJECT_DIR$/HouseValues-continuous.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/HouseValues-continuous.ipynb" afterDir="false" />
+    <list default="true" id="7e892372-6bdf-4435-bae0-f81fe6e0092a" name="Changes" comment=".idea files">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,7 +115,7 @@
       <workItem from="1732113279212" duration="2904000" />
       <workItem from="1732122820888" duration="6458000" />
       <workItem from="1732134257402" duration="10413000" />
-      <workItem from="1732164637455" duration="2046000" />
+      <workItem from="1732164637455" duration="2777000" />
     </task>
     <task id="LOCAL-00001" summary="Create setup.py to download, extract and load data into sqlite database.">
       <option name="closed" value="true" />
@@ -173,7 +173,23 @@
       <option name="project" value="LOCAL" />
       <updated>1732119166608</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Reduced sample set with heuristic and IQR. Tried to normalize prices with box cox and did Shapiro test for normality. Use joblib to store models. Added gradient boot.">
+      <option name="closed" value="true" />
+      <created>1732194856011</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1732194856011</updated>
+    </task>
+    <task id="LOCAL-00009" summary=".idea files">
+      <option name="closed" value="true" />
+      <created>1732194900742</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1732194900742</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -187,7 +203,9 @@
     <MESSAGE value="Added method to load_all and merge the two into the main dataframe" />
     <MESSAGE value="Updated variable names and am sticking to the gridsearch to make the model. Added regression analysis and scoring." />
     <MESSAGE value="Following method for gradient boosting algorithm" />
-    <option name="LAST_COMMIT_MESSAGE" value="Following method for gradient boosting algorithm" />
+    <MESSAGE value="Reduced sample set with heuristic and IQR. Tried to normalize prices with box cox and did Shapiro test for normality. Use joblib to store models. Added gradient boot." />
+    <MESSAGE value=".idea files" />
+    <option name="LAST_COMMIT_MESSAGE" value=".idea files" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/HouseProtestValues$setup.coverage" NAME="setup Coverage Results" MODIFIED="1732073249332" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
