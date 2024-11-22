@@ -1,7 +1,8 @@
+import os
 import sqlite3
 from zipfile import ZipFile as zf
+
 import chardet
-import os
 import pandas as pd
 
 
@@ -25,19 +26,38 @@ def unzip_files(src, dest, file_list):
                         zFile.extract(file, f"{dest}/")
 
 
+def extract_kaggle_dataset():
+    print("Extracting Kaggle dataset...")
+    df = pd.read_json('Kaggle/houston_housing market 2024.json')
+    df_r = df[
+        ['zpid', 'streetAddress', 'city', 'state', 'zipcode', 'homeType', 'bedrooms', 'bathrooms', 'price', 'yearBuilt',
+         'regionString', 'county', 'livingArea', 'zestimate', 'parcelId', 'latitude', 'longitude', 'mlsid',
+         'propertyTypeDimension', 'lotSize']]
+    df_r = df_r[(df_r['livingArea'] > 10) & (df_r['county'] == 'Harris County')]
+    df_r.to_csv('Data/kaggle_dataset.csv')
+    return None
+
+
 def load_tables_to_sqlite(file_list):
     encoder_dict = {'building_res.txt': 'Windows - 1252', 'exterior.txt': 'ascii', 'extra_features.txt': 'ascii',
                     'fixtures.txt': 'ascii', 'land.txt': 'ascii', 'real_neighborhood_code.txt': 'ascii',
-                    'real_acct.txt': 'Windows - 1252', }
+                    'real_acct.txt': 'Windows - 1252', 'parcels.csv': 'utf-8', 'extra_features_detail1.txt': 'utf-8',
+                    'kaggle_dataset.csv': 'utf-8'}
 
     conn = sqlite3.connect('HouseProtestValues.db')
     cursor = conn.cursor()
 
     for file in file_list:
         encoder = encoder_dict[file]
+
         try:
             print(f"Reading {file} into dataframe...")
-            df = pd.read_csv(f'Data/{file}', sep='\t', encoding=encoder, low_memory=False)
+            if file == 'parcels.csv':
+                # Exception for the parcel file exported from QGIS
+                df = pd.read_csv(f'Data/{file}')
+                df = df[['HCAD_NUM', 'lat', 'long']]
+            else:
+                df = pd.read_csv(f'Data/{file}', sep='\t', encoding=encoder, low_memory=False)
 
             # type column has two trailing spaces
             if file == 'fixtures.txt':
@@ -53,6 +73,7 @@ def load_tables_to_sqlite(file_list):
 
     conn.commit()
     conn.close()
+
 
 def detect_encoding():
     '''
@@ -71,10 +92,15 @@ def detect_encoding():
 if __name__ == "__main__":
     print("Extracting data...")
     data_files = ['real_neighborhood_code.txt', 'building_res.txt', "real_acct.txt", 'land.txt', 'fixtures.txt',
-                  'extra_features.txt', 'exterior.txt']
+                  'extra_features.txt', 'exterior.txt', 'extra_features_detail1.txt']
 
     # Extract files
     unzip_files(src="Zips", dest='Data', file_list=data_files)
+    # extract_kaggle_dataset()
+    # data_files.append('kaggle_dataset.csv')
+
+    # Add parcels.csv
+    data_files.append('parcels.csv')
 
     # Load tables into sqlite data
     load_tables_to_sqlite(data_files)
