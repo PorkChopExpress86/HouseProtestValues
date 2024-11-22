@@ -59,9 +59,8 @@ def load_tables_to_sqlite(file_list):
             else:
                 df = pd.read_csv(f'Data/{file}', sep='\t', encoding=encoder, low_memory=False)
 
-            # type column has two trailing spaces
-            if file == 'fixtures.txt':
-                df['type'] = df['type'].str.strip()
+            # Strip extra spaces on all object column types
+            df = df.apply(lambda x: x.str.strip() if x.dtype == 'object' else x)
 
         except Exception as e:
             print(f'{file} was not read by pandas. See exception:\n {e}')
