@@ -1,0 +1,85 @@
+select distinct cd, s_dscr, l_dscr
+from extra_features;
+
+select *
+from extra_features
+where l_dscr like '%pool%';
+
+
+
+SELECT br.acct,
+       br.bld_num,
+       br.date_erected,
+       br.im_sq_ft,
+       ra.land_ar,
+       br.perimeter,
+       br.dpr_val,
+       f.bedrooms,
+       f.full_bath,
+       f.half_bath,
+       f.total_rooms,
+       case when dscr = 'Good' then 1 else 0 end      as dscr_good,
+       case when dscr = 'Average' then 1 else 0 end   as dscr_average,
+       case when dscr = 'Low' then 1 else 0 end       as dscr_low,
+       case when dscr = 'Very Low' then 1 else 0 end  as dscr_very_low,
+       case when dscr = 'Excellent' then 1 else 0 end as dscr_excellent,
+       case when dscr = 'Superior' then 1 else 0 end  as dscr_superior,
+       case when dscr = 'Poor' then 1 else 0 end      as dscr_poor,
+       ra.land_val,
+       ra.bld_val,
+       ra.assessed_val,
+       ra.tot_appr_val,
+       ra.tot_mkt_val
+FROM building_res br
+         LEFT JOIN real_acct ra ON br.acct = ra.acct
+         LEFT JOIN (select acct,
+                           IFNULL(sum(units) filter (where type = 'RMB'), 0) as "bedrooms",
+                           IFNULL(sum(units) filter (where type = 'RMF'), 0) as "full_bath",
+                           IFNULL(sum(units) filter (where type = 'RMH'), 0) as "half_bath",
+                           IFNULL(sum(units) filter (where type = 'RMT'), 0) as "total_rooms"
+                    from fixtures
+                    group by acct
+                    order by "index") f ON br.acct = f.acct
+         LEFT JOIN (select acct,
+                           IFNULL(sum(asd_val) FILTER (WHERE cd = "RRG1  "), 0) as frame_detached_garage,
+                           IFNULL(sum(asd_val) FILTER (WHERE cd = "RRP5  "), 0) as gunite_pool,
+                           IFNULL(sum(asd_val) FILTER (WHERE cd = "RSP1  "), 0) as solar_panel,
+                           IFNULL(sum(asd_val) FILTER (WHERE cd = "RRP9  "), 0) as pool_heater,
+                           IFNULL(sum(asd_val) FILTER (WHERE cd = "RRG2  "), 0) as brick_garage,
+                           IFNULL(sum(asd_val) FILTER (WHERE cd = "RRC2  "), 0) as canopy_residential,
+                           IFNULL(sum(asd_val) FILTER (WHERE cd = "RRG3  "), 0) as frame_abov,
+                           IFNULL(sum(asd_val) FILTER (WHERE cd = "RRS1  "), 0) as frame_shed,
+                           IFNULL(sum(asd_val) FILTER (WHERE cd = "RRC1  "), 0) as carport_residential,
+                           IFNULL(sum(asd_val) FILTER (WHERE cd = "RCS9  "), 0) as foundation_repaired,
+                           IFNULL(sum(asd_val) FILTER (WHERE cd = "RCS1  "), 0) as cracked_slab
+                    from extra_features_detail1
+                    group by acct) ex1 on br.acct = ex1.acct
+WHERE br.impr_tp = 1001
+  AND br.property_use_cd = 'A1'
+  AND br.date_erected > 10;
+
+
+select acct,
+
+       IFNULL(sum(units) filter (where type = 'RMB'), 0) as "bedrooms",
+       IFNULL(sum(units) filter (where type = 'RMF'), 0) as "full_bath",
+       IFNULL(sum(units) filter (where type = 'RMH'), 0) as "half_bath",
+       IFNULL(sum(units) filter (where type = 'RMT'), 0) as "total_rooms"
+from fixtures
+group by acct;
+
+select acct,
+       IFNULL(sum(asd_val) FILTER (WHERE cd = "RRG1  "), 0) as frame_detached_garage,
+       IFNULL(sum(asd_val) FILTER (WHERE cd = "RRP5  "), 0) as gunite_pool,
+       IFNULL(sum(asd_val) FILTER (WHERE cd = "RSP1  "), 0) as solar_panel,
+       IFNULL(sum(asd_val) FILTER (WHERE cd = "RRP9  "), 0) as pool_heater,
+       IFNULL(sum(asd_val) FILTER (WHERE cd = "RRG2  "), 0) as brick_garage,
+       IFNULL(sum(asd_val) FILTER (WHERE cd = "RRC2  "), 0) as canopy_residential,
+       IFNULL(sum(asd_val) FILTER (WHERE cd = "RRG3  "), 0) as frame_abov,
+       IFNULL(sum(asd_val) FILTER (WHERE cd = "RRS1  "), 0) as frame_shed,
+       IFNULL(sum(asd_val) FILTER (WHERE cd = "RRC1  "), 0) as carport_residential,
+       IFNULL(sum(asd_val) FILTER (WHERE cd = "RCS9  "), 0) as foundation_repaired,
+       IFNULL(sum(asd_val) FILTER (WHERE cd = "RCS1  "), 0) as cracked_slab
+from extra_features_detail1
+group by acct;
+
