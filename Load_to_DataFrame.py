@@ -68,7 +68,8 @@ FROM building_res br
          LEFT JOIN parcels p on br.acct = p.HCAD_NUM
 WHERE br.impr_tp = 1001
   AND br.property_use_cd = 'A1'
-  AND br.date_erected > 1900'''
+  AND br.date_erected > 1900
+  AND ra.assessed_val > 0;'''
 
     df = pd.read_sql_query(sql_query, con)
     df['assessed_per_sqft'] = df['assessed_val'] / df['im_sq_ft']
