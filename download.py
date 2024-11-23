@@ -24,7 +24,10 @@ def wait_for_download_completion(download_dir, timeout=360, poll_interval=1):
     start_time = time.time()
     while time.time() - start_time < timeout:
         # Check for files still downloading (e.g., with .crdownload or .part extensions)
-        if not any(fname.endswith(('.crdownload', '.part', '.tmp')) for fname in os.listdir(download_dir)):
+        if not any(
+            fname.endswith((".crdownload", ".part", ".tmp"))
+            for fname in os.listdir(download_dir)
+        ):
             return True
         time.sleep(poll_interval)
     return False
@@ -47,14 +50,18 @@ def download_link_by_url(url, target_urls, download_dir=None, wait_time=10):
 
     # Set up Chrome options for downloads
     chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument('--headless')  # Run Chrome in headless mode
-    chrome_options.add_argument('--disable-gpu')  # Optional: Disable GPU acceleration for headless mode
+    # chrome_options.add_argument('--headless')  # Run Chrome in headless mode
+    # chrome_options.add_argument('--disable-gpu')  # Optional: Disable GPU acceleration for headless mode
 
-    prefs = {"download.default_directory": os.path.abspath(download_dir)}  # Change to your desired download path
+    prefs = {
+        "download.default_directory": os.path.abspath(download_dir)
+    }  # Change to your desired download path
     chrome_options.add_experimental_option("prefs", prefs)
 
     # Initialize WebDriver
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+    driver = webdriver.Chrome(
+        service=Service(ChromeDriverManager().install()), options=chrome_options
+    )
 
     try:
         # Ensure the download directory exists
@@ -67,7 +74,7 @@ def download_link_by_url(url, target_urls, download_dir=None, wait_time=10):
 
         for url in target_urls:
 
-            filename = url.split('/')[-1]
+            filename = url.split("/")[-1]
 
             # Remove the existing file if it exists
             target_file = os.path.join(download_dir, filename)
@@ -96,11 +103,13 @@ def download_link_by_url(url, target_urls, download_dir=None, wait_time=10):
         driver.quit()
 
 
-if __name__ == '__main__':
-    file_urls = ["https://download.hcad.org/data/CAMA/2024/Real_acct_owner.zip",
-                 "https://download.hcad.org/data/CAMA/2024/Real_building_land.zip",
-                 "https://download.hcad.org/data/CAMA/2024/Code_description_real.zip"]
+if __name__ == "__main__":
+    file_urls = [
+        "https://download.hcad.org/data/CAMA/2024/Real_acct_owner.zip",
+        "https://download.hcad.org/data/CAMA/2024/Real_building_land.zip",
+        "https://download.hcad.org/data/CAMA/2024/Code_description_real.zip",
+    ]
 
     # Download all three zips
     ajax_site_url = "https://hcad.org/pdata/pdata-property-downloads.html"  # Replace with the target website's URL
-    download_link_by_url(ajax_site_url, file_urls, 'Zips', 90)
+    download_link_by_url(ajax_site_url, file_urls, "Zips", 90)
