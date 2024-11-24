@@ -4,8 +4,8 @@ import pandas as pd
 
 
 def load_data_frame():
-    con = sqlite3.connect('HouseProtestValues.db')
-    sql_query = '''
+    con = sqlite3.connect("HouseProtestValues.db")
+    sql_query = """
     SELECT br.acct,
        br.bld_num,
        br.date_erected,
@@ -69,10 +69,11 @@ FROM building_res br
 WHERE br.impr_tp = 1001
   AND br.property_use_cd = 'A1'
   AND br.date_erected > 1900
-  AND ra.assessed_val > 0;'''
+  AND ra.assessed_val > 0;"""
 
     df = pd.read_sql_query(sql_query, con)
-    df['assessed_per_sqft'] = df['assessed_val'] / df['im_sq_ft']
+    df["assessed_per_sqft"] = df["assessed_val"] / df["im_sq_ft"]
+    df.dropna(inplace=True)
     return df
 
 
@@ -112,7 +113,7 @@ WHERE br.impr_tp = 1001
 #     return df_3
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # build_df = load_building_data()
     # fix_df = load_fixture_data()
     # df = merge_dataframes(build_df, fix_df)
