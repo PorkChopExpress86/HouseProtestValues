@@ -1,6 +1,6 @@
 from download import download_link_by_url
 from unzip_and_load_db import load_tables_to_sqlite, unzip_files
-from Extract_and_Load_Parcel_Data import unzip_parcel_data, extract_parcel_data
+from extract_and_load_parcel_data import unzip_parcel_data, extract_parcel_data
 
 if __name__ == "__main__":
     # Download files
