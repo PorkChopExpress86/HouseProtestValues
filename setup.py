@@ -1,5 +1,6 @@
 from download import download_link_by_url
 from unzip_and_load_db import load_tables_to_sqlite, unzip_files
+from Extract_and_Load_Parcel_Data import unzip_parcel_data, extract_parcel_data
 
 if __name__ == "__main__":
     # Download files
@@ -23,6 +24,12 @@ if __name__ == "__main__":
 
     # Extract files
     unzip_files(src="Zips", dst="Data", file_list=data_files)
+
+    # Unzip parcel data
+    unzip_parcel_data('Zips', 'Data')
+
+    # Add latitude and longitude coordinates in decimal degrees and export file
+    extract_parcel_data('Data/HCAD_PDATA/Parcels/Parcels.shp', 'Data/parcels.csv')
 
     # Add parcels.csv
     data_files.append("parcels.csv")
