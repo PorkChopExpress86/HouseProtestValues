@@ -1,5 +1,6 @@
 import os
 import time
+from operator import truediv
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -63,7 +64,7 @@ def download_link_by_url(url, target_urls, download_dir=None, wait_time=10):
         # Open the website
         driver.get(url)
 
-        time.sleep(20)
+        # time.sleep(20)
 
         for url in target_urls:
 
@@ -75,21 +76,29 @@ def download_link_by_url(url, target_urls, download_dir=None, wait_time=10):
                 print(f"File {filename} already exists. Overwriting it.")
                 os.remove(target_file)
 
-            # Wait for the link with the target URL to appear
-            link_element = WebDriverWait(driver, wait_time).until(
-                EC.presence_of_element_located((By.XPATH, f"//a[@href='{url}']")))
+            success = False
+            for attempt in range(2):
+                try:
+                    # Wait for the link with the target URL to appear
+                    link_element = WebDriverWait(driver, wait_time).until(
+                        EC.presence_of_element_located((By.XPATH, f"//a[@href='{url}']")))
 
-            # Click the link
-            link_element.click()
+                    # Click the link
+                    link_element.click()
 
-            time.sleep(5)
+                    time.sleep(5)
 
-            # Wait for the download to complete
-            if wait_for_download_completion(download_dir):
-                print("Download completed successfully!")
-            else:
-                print("Download did not complete within the timeout period.")
-
+                    # Wait for the download to complete
+                    if wait_for_download_completion(download_dir):
+                        print("Download completed successfully!")
+                        success = True
+                        break
+                except Exception as e:
+                    print(f"Attempt {attempt + 1} for {filename} failed: {e}")
+                    if attempt < 1:
+                        print("Retrying download...")
+            if not success:
+                print(f"Failed to download {filename} after 2 attempts. Please do so manually.!")
     finally:
         # Close the browser
         driver.quit()
