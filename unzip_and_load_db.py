@@ -55,7 +55,7 @@ def load_tables_to_sqlite(file_list):
             if file == "parcels.csv":
                 # Exception for the parcel file exported from QGIS
                 df = pd.read_csv(f"Data/{file}", low_memory=False)
-                df = df[["HCAD_NUM", "lat", "long"]]
+                df = df[["HCAD_NUM", "latitude", "longitude"]]
             else:
                 df = pd.read_csv(f"Data/{file}", sep="\t", encoding=encoder, low_memory=False)
 
