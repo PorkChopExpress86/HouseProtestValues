@@ -1,9 +1,34 @@
 import sqlite3
 
 import pandas as pd
+import numpy as np
+import os
+from zipfile import ZipFile as zf
+
+import chardet
+import pandas as pd
 
 
-def load_data_frame():
+def load_housing_data():
+    if does_file_exist("HouseProtestValues.db"):
+        load_from_sqlite()
+    else:
+        os.makedirs("Data", exist_ok=True)
+        if does_file_exist('Data/complete_sample_data.csv')== False:
+            with zf("housing_data.zip", "r") as zFile:
+                zFile.extractall("Data")
+        df = pd.read_csv("Data/complete_sample_data.csv", low_memory=False)
+        return df
+
+
+def does_file_exist(file_path):
+    if os.path.exists(file_path):
+        return True
+    else:
+        return False
+
+
+def load_from_sqlite():
     con = sqlite3.connect("HouseProtestValues.db")
     sql_query = """
 SELECT br.acct,
@@ -12,7 +37,6 @@ SELECT br.acct,
        br.im_sq_ft,
        ra.land_ar,
        br.perimeter,
-       br.dpr_val,
        f.bedrooms,
        f.full_bath,
        f.half_bath,
@@ -41,9 +65,14 @@ SELECT br.acct,
        p.longitude,
        ra.land_val,
        ra.bld_val,
+       br.dpr_val,
        ra.assessed_val,
-       ra.tot_appr_val,
-       ra.tot_mkt_val
+       ra.mailto,
+       ra.mail_addr_1,
+       ra.mail_addr_2,
+       ra.Mail_city,
+       ra.mail_state,
+       ra.mail_zip
 FROM building_res br
          LEFT JOIN real_acct ra ON br.acct = ra.acct
          LEFT JOIN (select acct,
@@ -75,8 +104,8 @@ WHERE br.impr_tp = 1001
   AND br.im_sq_ft > 50;"""
 
     df = pd.read_sql_query(sql_query, con)
-    df["assessed_per_sqft"] = df["assessed_val"] / df["im_sq_ft"]
     df.dropna(inplace=True)
+
     return df
 
 

@@ -7,3 +7,4 @@ HouseProtestValues.db
 /.venv
 /Output/
 .HouseProtestValues
+/__pycache__
