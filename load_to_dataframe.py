@@ -11,14 +11,26 @@ import pandas as pd
 
 def load_housing_data():
     if does_file_exist("HouseProtestValues.db"):
-        load_from_sqlite()
+        df = load_housing_data_from_sqlite()
     else:
         os.makedirs("Data", exist_ok=True)
-        if does_file_exist('Data/complete_sample_data.csv')== False:
+        if does_file_exist("Data/complete_sample_data.csv") == False:
             with zf("housing_data.zip", "r") as zFile:
                 zFile.extractall("Data")
         df = pd.read_csv("Data/complete_sample_data.csv", low_memory=False)
-        return df
+    return df
+
+
+def load_mailing_data():
+    if does_file_exist("HouseProtestValues.db"):
+        df = load_mail_data_from_sqlite()
+    else:
+        os.makedirs("Data", exist_ok=True)
+        if does_file_exist("Data/mailing_data.csv") == False:
+            with zf("mailing_data.zip", "r") as zFile:
+                zFile.extractall("Data")
+        df = pd.read_csv("Data/mailing_data.csv")
+    return df
 
 
 def does_file_exist(file_path):
@@ -28,7 +40,21 @@ def does_file_exist(file_path):
         return False
 
 
-def load_from_sqlite():
+def load_mail_data_from_sqlite():
+    con = sqlite3.connect("HouseProtestValues.db")
+    sql_address = """SELECT acct,
+                            mailto,
+                            mail_addr_1,
+                            mail_addr_2,
+                            Mail_city,
+                            mail_state,
+                            mail_zip
+                    FROM real_acct;"""
+    df = pd.read_sql_query(sql_address, con)
+    return df
+
+
+def load_housing_data_from_sqlite():
     con = sqlite3.connect("HouseProtestValues.db")
     sql_query = """
 SELECT br.acct,
