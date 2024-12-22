@@ -135,5 +135,96 @@ WHERE br.impr_tp = 1001
     return df
 
 
+def haversine(lat1, lon1, lat2, lon2):
+    # Radius of Earth in miles
+    r = 3958.8
+    # Convert degrees to radians
+    phi1, phi2 = np.radians(lat1), np.radians(lat2)
+    d_phi = np.radians(lat2 - lat1)
+    d_lambda = np.radians(lon2 - lon1)
+    # Haversine formula
+    a = np.sin(d_phi / 2) ** 2 + np.cos(phi1) * np.cos(phi2) * np.sin(d_lambda / 2) ** 2
+    c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a))
+    return r * c
+
+
+def create_sample_data_set():
+    # import housing data
+    df_house = load_housing_data_from_sqlite()
+
+    # Define the single point (latitude, longitude) to calculate the distance from
+    single_point = (29.760100, -95.370100)  # Houston
+
+    # Add a new column with distances
+    df_house["distance_miles"] = df_house.apply(
+        lambda row: haversine(
+            single_point[0], single_point[1], row["latitude"], row["longitude"]
+        ),
+        axis=1,
+    )
+
+    # Remove duplicates of housing data
+    df_house = (
+        df_house.groupby("acct")
+        .agg(
+            bld_num=("bld_num", "max"),
+            date_erected=("date_erected", "min"),
+            im_sq_ft=("im_sq_ft", "sum"),
+            land_ar=("land_ar", "mean"),
+            perimeter=("perimeter", "sum"),
+            bedrooms=("bedrooms", "mean"),
+            full_bath=("full_bath", "mean"),
+            half_bath=("half_bath", "mean"),
+            total_rooms=("total_rooms", "mean"),
+            dscr_e=("dscr_e", "mean"),
+            frame_detached_garage=("frame_detached_garage", "mean"),
+            gunite_pool=("gunite_pool", "mean"),
+            pool_heater=("pool_heater", "mean"),
+            solar_panel=("solar_panel", "mean"),
+            brick_garage=("brick_garage", "mean"),
+            canopy_residential=("canopy_residential", "mean"),
+            frame_abov=("frame_abov", "mean"),
+            frame_shed=("frame_shed", "mean"),
+            carport_residential=("carport_residential", "mean"),
+            foundation_repaired=("foundation_repaired", "mean"),
+            cracked_slab=("cracked_slab", "mean"),
+            latitude=("latitude", "mean"),
+            longitude=("longitude", "mean"),
+            distance_miles=("distance_miles", "mean"),
+            land_val=("land_val", "mean"),
+            bld_val=("bld_val", "mean"),
+            assessed_val=("assessed_val", "mean"),
+        )
+        .reset_index()
+    )
+
+    # assessed per square foot
+    df_house["assessed_per_sqft"] = df_house["assessed_val"] / df_house["im_sq_ft"]
+
+    # load mailing data
+    df_mail = load_mail_data_from_sqlite()
+
+    # merge data into a new dataframe
+    df_merge = df_house.merge(df_mail, how="left", left_on="acct", right_on="acct")
+
+    # Drop data with missing values
+    df_merge.dropna(inplace=True)
+
+    # Sample 10,000 rows
+    df_merge.sample(n=10000, random_state=42)
+
+    # filter for accounts in merge data in housing data and export
+    h_filter = df_merge.acct.isin(df_house.acct)
+    df_house = df_house[h_filter]
+
+    # filter for accounts in merge data in mailing data and export
+    m_filter = df_merge.acct.isin(df_mail.acct)
+    df_mail = df_mail[m_filter]
+
+    # export dataframes
+    df_house.to_csv("sample_housing_data.csv")
+    df_mail.to_csv("mailing_data.csv")
+
+
 if __name__ == "__main__":
-    load_data_frame()
+    create_sample_data_set()
