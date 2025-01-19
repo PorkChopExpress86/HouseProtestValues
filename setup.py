@@ -40,7 +40,7 @@ if __name__ == "__main__":
     unzip_parcel_data("Zips", "Data")
 
     # Add latitude and longitude coordinates in decimal degrees and export file
-    extract_parcel_data("Data/HCAD_PDATA/Parcels/Parcels.shp", "Data/parcels.csv")
+    extract_parcel_data("Data/Parcels.shp", "Data/parcels.csv")
 
     # Add parcels.csv
     data_files.append("parcels.csv")
