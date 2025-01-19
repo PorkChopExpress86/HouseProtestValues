@@ -143,7 +143,8 @@ def haversine(lat1, lon1, lat2, lon2):
     d_phi = np.radians(lat2 - lat1)
     d_lambda = np.radians(lon2 - lon1)
     # Haversine formula
-    a = np.sin(d_phi / 2) ** 2 + np.cos(phi1) * np.cos(phi2) * np.sin(d_lambda / 2) ** 2
+    a = np.sin(d_phi / 2) ** 2 + np.cos(phi1) * \
+        np.cos(phi2) * np.sin(d_lambda / 2) ** 2
     c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a))
     return r * c
 
@@ -199,13 +200,15 @@ def create_sample_data_set():
     )
 
     # assessed per square foot
-    df_house["assessed_per_sqft"] = df_house["assessed_val"] / df_house["im_sq_ft"]
+    df_house["assessed_per_sqft"] = df_house["assessed_val"] / \
+        df_house["im_sq_ft"]
 
     # load mailing data
     df_mail = load_mail_data_from_sqlite()
 
     # merge data into a new dataframe
-    df_merge = df_house.merge(df_mail, how="left", left_on="acct", right_on="acct")
+    df_merge = df_house.merge(
+        df_mail, how="left", left_on="acct", right_on="acct")
 
     # Drop data with missing values
     df_merge.dropna(inplace=True)
