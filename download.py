@@ -25,7 +25,10 @@ def wait_for_download_completion(download_dir, timeout=360, poll_interval=1):
     start_time = time.time()
     while time.time() - start_time < timeout:
         # Check for files still downloading (e.g., with .crdownload or .part extensions)
-        if not any(file_name.endswith((".crdownload", ".part", ".tmp")) for file_name in os.listdir(download_dir)):
+        if not any(
+            file_name.endswith((".crdownload", ".part", ".tmp"))
+            for file_name in os.listdir(download_dir)
+        ):
             return True
         time.sleep(poll_interval)
     return False
@@ -51,11 +54,15 @@ def download_link_by_url(url, target_urls, download_dir=None, wait_time=10):
     # chrome_options.add_argument('--headless')  # Run Chrome in headless mode
     # chrome_options.add_argument('--disable-gpu')  # Optional: Disable GPU acceleration for headless mode
 
-    prefs = {"download.default_directory": os.path.abspath(download_dir)}  # Change to your desired download path
+    prefs = {
+        "download.default_directory": os.path.abspath(download_dir)
+    }  # Change to your desired download path
     chrome_options.add_experimental_option("prefs", prefs)
 
     # Initialize WebDriver
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+    driver = webdriver.Chrome(
+        service=Service(ChromeDriverManager().install()), options=chrome_options
+    )
 
     try:
         # Ensure the download directory exists
@@ -81,7 +88,10 @@ def download_link_by_url(url, target_urls, download_dir=None, wait_time=10):
                 try:
                     # Wait for the link with the target URL to appear
                     link_element = WebDriverWait(driver, wait_time).until(
-                        EC.presence_of_element_located((By.XPATH, f"//a[@href='{url}']")))
+                        EC.presence_of_element_located(
+                            (By.XPATH, f"//a[@href='{url}']")
+                        )
+                    )
 
                     # Click the link
                     link_element.click()
@@ -98,16 +108,20 @@ def download_link_by_url(url, target_urls, download_dir=None, wait_time=10):
                     if attempt < 1:
                         print("Retrying download...")
             if not success:
-                print(f"Failed to download {filename} after 2 attempts. Please do so manually.!")
+                print(
+                    f"Failed to download {filename} after 2 attempts. Please do so manually.!"
+                )
     finally:
         # Close the browser
         driver.quit()
 
 
 if __name__ == "__main__":
-    file_urls = ["https://download.hcad.org/data/CAMA/2024/Real_acct_owner.zip",
+    file_urls = [
+        "https://download.hcad.org/data/CAMA/2024/Real_acct_owner.zip",
         "https://download.hcad.org/data/CAMA/2024/Real_building_land.zip",
-        "https://download.hcad.org/data/CAMA/2024/Code_description_real.zip", ]
+        "https://download.hcad.org/data/CAMA/2024/Code_description_real.zip",
+    ]
 
     # Download all three zips
     ajax_site_url = "https://hcad.org/pdata/pdata-property-downloads.html"  # Replace with the target website's URL
