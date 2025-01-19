@@ -30,19 +30,47 @@ def extract_kaggle_dataset():
     print("Extracting Kaggle dataset...")
     df = pd.read_json("Kaggle/houston_housing market 2024.json")
     df_r = df[
-        ["zpid", "streetAddress", "city", "state", "zipcode", "homeType", "bedrooms", "bathrooms", "price", "yearBuilt",
-            "regionString", "county", "livingArea", "zestimate", "parcelId", "latitude", "longitude", "mlsid",
-            "propertyTypeDimension", "lotSize", ]]
+        [
+            "zpid",
+            "streetAddress",
+            "city",
+            "state",
+            "zipcode",
+            "homeType",
+            "bedrooms",
+            "bathrooms",
+            "price",
+            "yearBuilt",
+            "regionString",
+            "county",
+            "livingArea",
+            "zestimate",
+            "parcelId",
+            "latitude",
+            "longitude",
+            "mlsid",
+            "propertyTypeDimension",
+            "lotSize",
+        ]
+    ]
     df_r = df_r[(df_r["livingArea"] > 10) & (df_r["county"] == "Harris County")]
     df_r.to_csv("Data/kaggle_dataset.csv")
     return None
 
 
 def load_tables_to_sqlite(file_list):
-    encoder_dict = {"building_res.txt": "Windows - 1252", "exterior.txt": "ascii", "extra_features.txt": "ascii",
-        "fixtures.txt": "ascii", "land.txt": "ascii", "real_neighborhood_code.txt": "ascii",
-        "real_acct.txt": "Windows - 1252", "parcels.csv": "utf-8", "extra_features_detail1.txt": "utf-8",
-        "kaggle_dataset.csv": "utf-8", }
+    encoder_dict = {
+        "building_res.txt": "Windows - 1252",
+        "exterior.txt": "ascii",
+        "extra_features.txt": "ascii",
+        "fixtures.txt": "ascii",
+        "land.txt": "ascii",
+        "real_neighborhood_code.txt": "ascii",
+        "real_acct.txt": "Windows - 1252",
+        "parcels.csv": "utf-8",
+        "extra_features_detail1.txt": "utf-8",
+        "kaggle_dataset.csv": "utf-8",
+    }
 
     conn = sqlite3.connect("HouseProtestValues.db")
     cursor = conn.cursor()
@@ -57,7 +85,9 @@ def load_tables_to_sqlite(file_list):
                 df = pd.read_csv(f"Data/{file}", low_memory=False)
                 df = df[["HCAD_NUM", "latitude", "longitude"]]
             else:
-                df = pd.read_csv(f"Data/{file}", sep="\t", encoding=encoder, low_memory=False)
+                df = pd.read_csv(
+                    f"Data/{file}", sep="\t", encoding=encoder, low_memory=False
+                )
 
             # Strip extra spaces on all object column types
             df = df.apply(lambda x: x.str.strip() if x.dtype == "object" else x)
@@ -90,8 +120,16 @@ def detect_encoding():
 
 if __name__ == "__main__":
     print("Extracting data...")
-    data_files = ["real_neighborhood_code.txt", "building_res.txt", "real_acct.txt", "land.txt", "fixtures.txt",
-        "extra_features.txt", "exterior.txt", "extra_features_detail1.txt", ]
+    data_files = [
+        "real_neighborhood_code.txt",
+        "building_res.txt",
+        "real_acct.txt",
+        "land.txt",
+        "fixtures.txt",
+        "extra_features.txt",
+        "exterior.txt",
+        "extra_features_detail1.txt",
+    ]
 
     # Extract files
     unzip_files(src="Zips", dst="Data", file_list=data_files)
