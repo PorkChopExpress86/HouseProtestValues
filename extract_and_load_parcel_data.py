@@ -47,6 +47,6 @@ def has_sufficient_points(geometry):
     return False
 
 
-if __name__ == '__main__':
-    unzip_parcel_data('Zips', 'Data')
-    extract_parcel_data('Data/HCAD_PDATA/Parcels/Parcels.shp', 'Data/parcels.csv')
+if __name__ == "__main__":
+    unzip_parcel_data("Zips", "Data")
+    extract_parcel_data("Data/Parcels.shp", "Data/parcels.csv")
