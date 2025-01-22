@@ -10,6 +10,7 @@ import pandas as pd
 
 
 def load_housing_data():
+
     if does_file_exist("HouseProtestValues.db"):
         df = load_housing_data_from_sqlite()
     else:
@@ -18,6 +19,14 @@ def load_housing_data():
             with zf("housing_data.zip", "r") as zFile:
                 zFile.extractall("Data")
         df = pd.read_csv("Data/complete_sample_data.csv", low_memory=False)
+    return df
+
+def load_feather_file():
+    if does_file_exist("house_data.feather"):
+        df = pd.read_feather("house_data.feather")
+    else:
+        df = load_housing_data_from_sqlite()
+        df.to_feather("house_data.feather")
     return df
 
 
@@ -129,7 +138,10 @@ WHERE br.impr_tp = 1001
   AND ra.assessed_val > 0
   AND br.im_sq_ft > 50;"""
 
+    # Run the query on the sqlite database
     df = pd.read_sql_query(sql_query, con)
+
+    # Drop rows that are missing data
     df.dropna(inplace=True)
 
     return df
