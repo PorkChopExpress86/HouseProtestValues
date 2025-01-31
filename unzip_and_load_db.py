@@ -129,6 +129,7 @@ if __name__ == "__main__":
         "extra_features.txt",
         "exterior.txt",
         "extra_features_detail1.txt",
+        "parcels.csv",
     ]
 
     # Extract files
