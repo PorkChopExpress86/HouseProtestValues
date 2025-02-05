@@ -129,7 +129,6 @@ if __name__ == "__main__":
         "extra_features.txt",
         "exterior.txt",
         "extra_features_detail1.txt",
-        "parcels.csv",
     ]
 
     # Extract files
@@ -137,10 +136,10 @@ if __name__ == "__main__":
     # extract_kaggle_dataset()
     # data_files.append('kaggle_dataset.csv')
 
-    # Add parcels.csv
-    data_files.append("parcels.csv")
+    # # Add parcels.csv
+    # data_files.append("parcels.csv")
 
-    # Load tables into sqlite data
-    load_tables_to_sqlite(data_files)
+    # # Load tables into sqlite data
+    # load_tables_to_sqlite(data_files)
 
     print("Done!")

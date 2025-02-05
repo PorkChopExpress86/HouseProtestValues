@@ -8,7 +8,7 @@ from zipfile import ZipFile as zf
 import chardet
 
 
-def load_housing_data():
+def load_housing_data() -> pd.DataFrame:
 
     if does_file_exist("hcad_data.db"):
         df = load_housing_data_from_sqlite()
@@ -20,7 +20,8 @@ def load_housing_data():
         df = pd.read_csv("Data/complete_sample_data.csv", low_memory=False)
     return df
 
-def load_feather_file():
+
+def load_feather_file() -> pd.DataFrame:
     if does_file_exist("house_data.feather"):
         df = pd.read_feather("house_data.feather")
     else:
@@ -29,41 +30,15 @@ def load_feather_file():
     return df
 
 
-def load_mailing_data():
-    if does_file_exist("HouseProtestValues.db"):
-        df = load_mail_data_from_sqlite()
-    else:
-        os.makedirs("Data", exist_ok=True)
-        if does_file_exist("Data/mailing_data.csv") == False:
-            with zf("mailing_data.zip", "r") as zFile:
-                zFile.extractall("Data")
-        df = pd.read_csv("Data/mailing_data.csv")
-    return df
-
-
-def does_file_exist(file_path):
+def does_file_exist(file_path) -> bool:
     if os.path.exists(file_path):
         return True
     else:
         return False
 
 
-def load_mail_data_from_sqlite():
-    con = sqlite3.connect("HouseProtestValues.db")
-    sql_address = """SELECT acct,
-                            mailto,
-                            mail_addr_1,
-                            mail_addr_2,
-                            Mail_city,
-                            mail_state,
-                            mail_zip
-                    FROM real_acct;"""
-    df = pd.read_sql_query(sql_address, con)
-    return df
-
-
-def load_housing_data_from_sqlite():
-    con = sqlite3.connect("HouseProtestValues.db")
+def load_housing_data_from_sqlite() -> pd.DataFrame:
+    con = sqlite3.connect("hcad_data.db")
     sql_query = """
 SELECT 
 	br.acct,
@@ -134,10 +109,7 @@ FROM extra_features_detail1
 GROUP BY acct) ex1 ON br.acct = ex1.acct
 LEFT JOIN parcels p ON br.acct = p.acct
 WHERE br.impr_tp = 1001
-  AND br.property_use_cd = 'A1'
-  AND br.date_erected > 1900
-  AND ra.assessed_val > 0
-  AND br.im_sq_ft > 50;"""
+      AND ra.assessed_val > 0;"""
 
     # Run the query on the sqlite database
     df = pd.read_sql_query(sql_query, con)
@@ -148,7 +120,7 @@ WHERE br.impr_tp = 1001
     return df
 
 
-def haversine(lat1, lon1, lat2, lon2):
+def haversine(lat1, lon1, lat2, lon2) -> float:
     # Radius of Earth in miles
     r = 3958.8
     # Convert degrees to radians
@@ -156,8 +128,7 @@ def haversine(lat1, lon1, lat2, lon2):
     d_phi = np.radians(lat2 - lat1)
     d_lambda = np.radians(lon2 - lon1)
     # Haversine formula
-    a = np.sin(d_phi / 2) ** 2 + np.cos(phi1) * \
-        np.cos(phi2) * np.sin(d_lambda / 2) ** 2
+    a = np.sin(d_phi / 2) ** 2 + np.cos(phi1) * np.cos(phi2) * np.sin(d_lambda / 2) ** 2
     c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a))
     return r * c
 
@@ -204,7 +175,6 @@ def create_sample_data_set():
             cracked_slab=("cracked_slab", "mean"),
             latitude=("latitude", "mean"),
             longitude=("longitude", "mean"),
-            distance_miles=("distance_miles", "mean"),
             land_val=("land_val", "mean"),
             bld_val=("bld_val", "mean"),
             assessed_val=("assessed_val", "mean"),
@@ -213,15 +183,13 @@ def create_sample_data_set():
     )
 
     # assessed per square foot
-    df_house["assessed_per_sqft"] = df_house["assessed_val"] / \
-        df_house["im_sq_ft"]
+    df_house["assessed_per_sqft"] = df_house["assessed_val"] / df_house["im_sq_ft"]
 
     # load mailing data
     df_mail = load_mail_data_from_sqlite()
 
     # merge data into a new dataframe
-    df_merge = df_house.merge(
-        df_mail, how="left", left_on="acct", right_on="acct")
+    df_merge = df_house.merge(df_mail, how="left", left_on="acct", right_on="acct")
 
     # Drop data with missing values
     df_merge.dropna(inplace=True)

@@ -1,6 +1,7 @@
 from download import download_link_by_url
-from unzip_and_load_db import load_tables_to_sqlite, unzip_files
+from unzip_and_load_db import unzip_files
 from extract_and_load_parcel_data import unzip_parcel_data, extract_parcel_data
+from load_data_to_sql import create_tables, import_data, import_parcels
 
 if __name__ == "__main__":
     # Download files
@@ -45,13 +46,16 @@ if __name__ == "__main__":
     # Add parcels.csv
     data_files.append("parcels.csv")
 
-    # Load tables into sqlite data
-    load_tables_to_sqlite(data_files)
+    # Create tables in sqlite database, drop if exists
+    create_tables()
 
-    # Extract files
-    unzip_files(src="Zips", dst="Data", file_list=data_files)
+    # Import data for each table
+    import_data("real_acct.txt", "real_acct")
+    import_data("building_res.txt", "building_res")
+    import_data("fixtures.txt", "fixtures")
+    import_data("extra_features_detail1.txt", "extra_features_detail1")
 
-    # Load data into sqlite database
-    load_tables_to_sqlite(data_files)
+    # Import GIS parcel data
+    import_parcels()
 
     print("Done! Ready to run House Values Notebook")
