@@ -36,6 +36,9 @@ SELECT
 	ra.bld_val,
 	br.dpr_val,
 	ra.assessed_val,
+	ra.site_addr_1,
+	ra.site_addr_2,
+	ra.site_addr_3,
 	ra.mailto,
 	ra.mail_addr_1,
 	ra.mail_addr_2,
@@ -70,4 +73,4 @@ WHERE br.impr_tp = 1001
   AND br.property_use_cd = 'A1'
   AND br.date_erected > 1900
   AND ra.assessed_val > 0
-  AND br.im_sq_ft > 50;
+ORDER BY br.acct ASC;
