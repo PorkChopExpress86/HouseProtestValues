@@ -1,7 +1,7 @@
-from download import download_link_by_url
-from unzip_and_load_db import unzip_files
-from extract_and_load_parcel_data import unzip_parcel_data, extract_parcel_data
-from load_data_to_sql import create_tables, import_data, import_parcels
+from pyhcad import download_link_by_url
+from pyhcad import unzip_files
+from pyhcad import unzip_parcel_data, extract_parcel_data
+from pyhcad import create_tables, import_data, import_parcels
 
 if __name__ == "__main__":
     # Download files
