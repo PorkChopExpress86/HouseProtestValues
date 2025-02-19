@@ -1,0 +1,6 @@
+{
+    "Zips\\Code_description_real.zip": "624d8ecb4cabbf776b366dbdc41bda382bc4bab2",
+    "Zips\\Parcels.zip": "7a6a4e58990f66977fdbb76aa3c5626dedf5b1f0",
+    "Zips\\Real_acct_owner.zip": "12c9a198f29a75015de5b067b29696351968da65",
+    "Zips\\Real_building_land.zip": "966b5425a26b3f9e1036d74bea17ba079cd92cd2"
+}
