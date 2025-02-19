@@ -51,8 +51,8 @@ def download_link_by_url(url, target_urls, download_dir=None, wait_time=10):
 
     # Set up Chrome options for downloads
     chrome_options = webdriver.ChromeOptions()
-    # chrome_options.add_argument('--headless')  # Run Chrome in headless mode
-    # chrome_options.add_argument('--disable-gpu')  # Optional: Disable GPU acceleration for headless mode
+    chrome_options.add_argument('--headless')  # Run Chrome in headless mode
+    chrome_options.add_argument('--disable-gpu')  # Optional: Disable GPU acceleration for headless mode
 
     prefs = {
         "download.default_directory": os.path.abspath(download_dir)
@@ -70,8 +70,6 @@ def download_link_by_url(url, target_urls, download_dir=None, wait_time=10):
 
         # Open the website
         driver.get(url)
-
-        # time.sleep(20)
 
         for url in target_urls:
 
